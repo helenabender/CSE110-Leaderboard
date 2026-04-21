@@ -1,94 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CSE110 Participation Team Leaderboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* ── Skip link ── */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    background: var(--accent);
+    color: #000;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 999;
+    transition: top 0.15s;
+    text-decoration: none;
+  }
+  .skip-link:focus { top: 16px; }
+
+  /* ── Dark mode tokens ── */
   :root {
     --bg: #07080d;
     --surface: #0e0f18;
     --surface2: #13141f;
-    --border: #1c1d2e;
-    --border2: #252638;
+    --border: #2a2c42;
+    --border2: #363854;
     --gold: #ffd700;
-    --silver: #a8b2bd;
-    --bronze: #cd7f32;
+    --silver: #c8d0d8;
+    --bronze: #e0943a;
     --accent: #39ff14;
     --accent2: #00cfff;
-    --text: #dde0f0;
-    --muted: #484a65;
-    --muted2: #6b6e8f;
+    --text: #f0f2ff;
+    --muted: #9fa3c0;
+    --muted2: #b8bcda;
+    --focus: #ffdd00;
   }
 
+  /* ── Light mode tokens ── */
   [data-theme="light"] {
     --bg: #faf8f5;
     --surface: #ffffff;
     --surface2: #f2efe9;
     --border: #e4dfd6;
-    --border2: #d4cdc2;
+    --border2: #c4b9ae;
     --gold: #b8860b;
-    --silver: #6b7785;
+    --silver: #5a6472;
     --bronze: #8b4513;
-    --accent: #6c3bff;
-    --accent2: #e8474c;
+    --accent: #5a28e8;
+    --accent2: #c93030;
     --text: #1e1a2e;
-    --muted: #a89f94;
-    --muted2: #7a6f6a;
+    --muted: #5e5750;
+    --muted2: #3d3730;
+    --focus: #1a0080;
   }
-
   [data-theme="light"] body {
     background-image:
-      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(108,59,255,0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 40% at 90% 100%, rgba(232,71,76,0.06) 0%, transparent 70%);
+      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(90,40,232,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 90% 100%, rgba(201,48,48,0.06) 0%, transparent 70%);
   }
-
-  [data-theme="light"] .row:not(.zero):hover { border-color: var(--border2); }
-
   [data-theme="light"] .filter-btn.active {
-    background: rgba(108,59,255,0.08);
+    background: rgba(90,40,232,0.1);
     border-color: var(--accent);
     color: var(--accent);
   }
-
   [data-theme="light"] .filter-btn.all-btn.active {
-    background: rgba(232,71,76,0.08);
+    background: rgba(201,48,48,0.1);
     border-color: var(--accent2);
     color: var(--accent2);
   }
 
-  .theme-toggle {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    padding: 7px 14px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    color: var(--muted2);
-    cursor: pointer;
-    transition: all 0.15s;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    white-space: nowrap;
-  }
+  /* ── Reset ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .theme-toggle:hover {
-    border-color: var(--accent2);
-    color: var(--accent2);
-  }
-
-  .theme-toggle .theme-icon { font-size: 0.9rem; }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  /* ── Base — 16px minimum per WCAG ── */
   body {
     background: var(--bg);
     color: var(--text);
     font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    line-height: 1.6;
     min-height: 100vh;
     padding: 48px 24px 80px;
     background-image:
@@ -96,18 +91,25 @@
       radial-gradient(ellipse 50% 40% at 90% 100%, rgba(0,207,255,0.05) 0%, transparent 70%);
   }
 
+  /* ── Visible focus ring for keyboard users ── */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* ── Header ── */
   .header {
-    max-width: 760px;
+    max-width: 820px;
     margin: 0 auto 48px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 16px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 24px;
+    gap: 20px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 28px;
   }
-
   .header-left h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(3.5rem, 9vw, 6.5rem);
@@ -115,266 +117,294 @@
     line-height: 0.9;
     color: var(--text);
   }
-
   .header-left h1 span { color: var(--accent); }
-
   .header-left p {
-    font-size: 0.65rem;
-    letter-spacing: 0.22em;
+    font-size: 0.9rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted2);
-    margin-top: 8px;
+    margin-top: 10px;
   }
 
+  /* ── Stats badge ── */
   .total-badge {
     text-align: right;
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--muted2);
     line-height: 1.8;
   }
-
   .total-badge strong {
     display: block;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.8rem;
+    font-size: 3rem;
     letter-spacing: 0.05em;
     color: var(--accent2);
     line-height: 1;
   }
 
-  .filter-section {
-    max-width: 760px;
-    margin: 0 auto 32px;
-  }
-
-  .filter-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
+  /* ── Theme toggle ── */
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 14px; }
+  .theme-toggle {
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--muted2);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-
-  .filter-row {
     display: flex;
+    align-items: center;
     gap: 8px;
-    flex-wrap: wrap;
+    white-space: nowrap;
+    min-height: 44px; /* WCAG 2.5.5 touch target */
   }
+  .theme-toggle:hover { border-color: var(--accent2); color: var(--accent2); }
+  .theme-toggle .theme-icon { font-size: 1.1rem; }
 
+  /* ── Filters ── */
+  .filter-section { max-width: 820px; margin: 0 auto 36px; }
+  .filter-label {
+    font-size: 0.85rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .filter-row { display: flex; gap: 10px; flex-wrap: wrap; }
   .filter-btn {
     background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    padding: 8px 18px;
+    border: 2px solid var(--border2);
+    border-radius: 6px;
+    padding: 10px 20px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
     color: var(--muted2);
     cursor: pointer;
     transition: all 0.15s;
     text-transform: uppercase;
+    min-height: 44px; /* WCAG touch target */
   }
-
   .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-
   .filter-btn.active {
     background: rgba(57,255,20,0.08);
     border-color: var(--accent);
     color: var(--accent);
   }
-
   .filter-btn.all-btn.active {
     background: rgba(0,207,255,0.08);
     border-color: var(--accent2);
     color: var(--accent2);
   }
 
+  /* ── Column headers ── */
   .table-header {
-    max-width: 760px;
-    margin: 0 auto 6px;
+    max-width: 820px;
+    margin: 0 auto 8px;
     display: grid;
-    grid-template-columns: 52px 70px 1fr 110px 56px;
-    gap: 12px;
-    padding: 0 18px;
-    font-size: 0.55rem;
-    letter-spacing: 0.2em;
+    grid-template-columns: 64px 80px 1fr 120px 68px;
+    gap: 14px;
+    padding: 0 20px;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--muted2);
+    font-weight: 600;
   }
 
+  /* ── Board list ── */
   .board {
-    max-width: 760px;
+    max-width: 820px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
   }
-
   .row {
     display: grid;
-    grid-template-columns: 52px 70px 1fr 110px 56px;
+    grid-template-columns: 64px 80px 1fr 120px 68px;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 13px 18px;
-    transition: all 0.12s;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    transition: border-color 0.12s, transform 0.12s;
     animation: fadeUp 0.35s ease both;
     position: relative;
     overflow: hidden;
   }
-
   .row::before {
     content: '';
     position: absolute;
     left: 0; top: 0; bottom: 0;
-    width: 3px;
+    width: 4px;
     background: var(--muted);
     opacity: 0.3;
   }
-
   .row.rank-1::before { background: var(--gold); opacity: 1; }
   .row.rank-2::before { background: var(--silver); opacity: 1; }
   .row.rank-3::before { background: var(--bronze); opacity: 1; }
-  .row.zero::before   { opacity: 0.1; }
+  .row.zero::before   { opacity: 0.15; }
 
-  .row.rank-1 { background: rgba(255,215,0,0.04); border-color: rgba(255,215,0,0.2); }
-  .row.rank-2 { background: rgba(168,178,189,0.03); border-color: rgba(168,178,189,0.15); }
-  .row.rank-3 { background: rgba(205,127,50,0.04); border-color: rgba(205,127,50,0.18); }
-  .row.zero   { opacity: 0.35; }
+  .row.rank-1 { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.25); }
+  .row.rank-2 { background: rgba(200,208,216,0.04); border-color: rgba(200,208,216,0.2); }
+  .row.rank-3 { background: rgba(224,148,58,0.05); border-color: rgba(224,148,58,0.22); }
+  .row.zero   { opacity: 0.55; } /* raised from 0.35 for legibility */
 
-  .row:not(.zero):hover { border-color: var(--border2); transform: translateX(3px); }
+  .row:not(.zero):hover { border-color: var(--border2); transform: translateX(4px); }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .row { animation: none; transition: none; }
+    .bar-fill { transition: none; }
+  }
 
+  /* ── Rank ── */
   .rank {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
     letter-spacing: 0.05em;
-    color: var(--muted);
+    color: var(--muted2);
     text-align: center;
   }
   .row.rank-1 .rank { color: var(--gold); }
   .row.rank-2 .rank { color: var(--silver); }
   .row.rank-3 .rank { color: var(--bronze); }
 
+  /* ── Team label ── */
   .team {
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     color: var(--text);
   }
 
-  .dots {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
+  /* ── Session dots ── */
+  .dots { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
     background: var(--border2);
     flex-shrink: 0;
-    cursor: default;
   }
+  .dot.present { box-shadow: 0 0 7px currentColor; }
 
-  .dot.present { box-shadow: 0 0 6px currentColor; }
-
+  /* ── Progress bar ── */
   .bar-cell { display: flex; align-items: center; }
-
   .bar-bg {
     flex: 1;
-    height: 4px;
+    height: 6px;
     background: var(--border);
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
   }
-
   .bar-fill {
     height: 100%;
-    border-radius: 2px;
+    border-radius: 3px;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
   }
 
+  /* ── Count ── */
   .count {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
+    font-size: 2rem;
     letter-spacing: 0.03em;
     text-align: right;
     color: var(--accent);
   }
-  .row.zero .count { color: var(--muted); font-size: 1.2rem; }
+  .row.zero .count { color: var(--muted2); font-size: 1.5rem; }
 
+  /* ── Legend ── */
   .legend {
-    max-width: 760px;
-    margin: 28px auto 0;
+    max-width: 820px;
+    margin: 32px auto 0;
     display: flex;
-    gap: 20px;
+    gap: 24px;
     flex-wrap: wrap;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    border-top: 2px solid var(--border);
   }
-
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 7px;
-    font-size: 0.6rem;
+    gap: 9px;
+    font-size: 0.82rem;
     color: var(--muted2);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
+  .legend-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
 
-  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
-
+  /* ── Footer ── */
   .footer {
-    max-width: 760px;
-    margin: 40px auto 0;
-    font-size: 0.6rem;
-    color: var(--muted);
-    letter-spacing: 0.12em;
+    max-width: 820px;
+    margin: 44px auto 0;
+    font-size: 0.82rem;
+    color: var(--muted2);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     text-align: center;
     line-height: 2;
+  }
+
+  /* ── Responsive: hide bar column on small screens ── */
+  @media (max-width: 600px) {
+    .table-header, .row {
+      grid-template-columns: 52px 64px 1fr 64px;
+    }
+    .table-header span:nth-child(4),
+    .row .bar-cell { display: none; }
+    body { padding: 32px 16px 60px; }
   }
 </style>
 </head>
 <body>
 
-<div class="header">
+<a href="#board" class="skip-link">Skip to leaderboard</a>
+
+<header class="header" role="banner">
   <div class="header-left">
     <h1>CSE 110 TEAM<br><span>BOARD</span></h1>
     <p>Participation Tracker · All Lectures</p>
   </div>
-  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
-      <span class="theme-icon">☀️</span><span id="themeLabel">Light Mode</span>
+  <div class="header-right">
+    <button
+      class="theme-toggle"
+      id="themeToggle"
+      onclick="toggleTheme()"
+      aria-label="Switch to light mode"
+      aria-pressed="false"
+    >
+      <span class="theme-icon" aria-hidden="true">☀️</span>
+      <span id="themeLabel">Light Mode</span>
     </button>
-    <div class="total-badge">
+    <div class="total-badge" aria-live="polite" aria-atomic="true">
       <strong id="totalEntries">0</strong>
-      Total Entries
-      <br>
+      <span>Total Entries</span><br>
       <span id="sessionCount">0</span> Sessions Tracked
     </div>
   </div>
-</div>
+</header>
 
-<div class="filter-section">
-  <div class="filter-label">Filter by Date</div>
-  <div class="filter-row" id="filterRow"></div>
-</div>
+<nav class="filter-section" aria-label="Filter leaderboard by date">
+  <div class="filter-label" id="filterLabel">Filter by Date</div>
+  <div class="filter-row" id="filterRow" role="group" aria-labelledby="filterLabel"></div>
+</nav>
 
-<div class="table-header">
+<div class="table-header" role="row" aria-hidden="true">
   <span style="text-align:center">Rank</span>
   <span>Team</span>
   <span>Sessions Present</span>
@@ -382,31 +412,20 @@
   <span style="text-align:right">Total</span>
 </div>
 
-<div class="board" id="board"></div>
-<div class="legend" id="legend"></div>
+<main id="board" class="board" role="list" aria-label="Team participation leaderboard"></main>
 
-<div class="footer">
-  Showing all 25 teams &nbsp;·&nbsp; Dimmed teams have 0 entries for selected filter
-</div>
+<section class="legend" id="legend" aria-label="Session color legend"></section>
+
+<footer class="footer" role="contentinfo">
+  Showing all 25 teams · Dimmed teams have 0 entries for selected filter
+</footer>
 
 <script>
 /* ================================================================
    HOW TO ADD A NEW DATE SESSION:
-   ─────────────────────────────
-   1. Add a new object to SESSIONS:
-      { label: "21-Apr", display: "Apr 21", color: "#00cfff" }
-
-      - label:   must match exactly what you use in PARTICIPATION
-      - display: shown on buttons and legend
-      - color:   any CSS hex color for the dot
-
-   2. Add rows to PARTICIPATION for that date:
-      { date: "21-Apr", team: 5 },
-      { date: "21-Apr", team: 12 },
-
-   HOW TO CHANGE THE NUMBER OF TEAMS:
-   ────────────────────────────────────
-   Change TOTAL_TEAMS below.
+   1. Add to SESSIONS: { label: "21-Apr", display: "Apr 21", color: "#00cfff" }
+   2. Add entries to PARTICIPATION: { date: "21-Apr", team: 5 }
+   HOW TO CHANGE NUMBER OF TEAMS: Change TOTAL_TEAMS.
 ================================================================ */
 
 const TOTAL_TEAMS = 25;
@@ -416,101 +435,38 @@ const SESSIONS = [
   { label: "9-Apr",  display: "Apr 9",  color: "#ffb347" },
   { label: "14-Apr", display: "Apr 14", color: "#39ff14" },
   { label: "16-Apr", display: "Apr 16", color: "#a78bfa" },
-  // ADD NEW SESSIONS HERE:
-  // { label: "21-Apr", display: "Apr 21", color: "#00cfff" },
-  // { label: "23-Apr", display: "Apr 23", color: "#ff4757" },
 ];
 
 const PARTICIPATION = [
-  // APR 7
-  { date: "7-Apr",  team: 22 },
-  { date: "7-Apr",  team: 25 },
-  { date: "7-Apr",  team: 7  },
-  { date: "7-Apr",  team: 11 },
-  { date: "7-Apr",  team: 14 },
-  { date: "7-Apr",  team: 21 },
-  { date: "7-Apr",  team: 3  },
-  { date: "7-Apr",  team: 10 },
-  { date: "7-Apr",  team: 18 },
-  { date: "7-Apr",  team: 9  },
-  { date: "7-Apr",  team: 23 },
-  { date: "7-Apr",  team: 3  },
-  { date: "7-Apr",  team: 2  },
-  { date: "7-Apr",  team: 24 },
-  { date: "7-Apr",  team: 8  },
-  { date: "7-Apr",  team: 15 },
-  { date: "7-Apr",  team: 16 },
-  { date: "7-Apr",  team: 5  },
-  { date: "7-Apr",  team: 22 },
-  { date: "7-Apr",  team: 11 },
-  // APR 9
-  { date: "9-Apr",  team: 6  },
-  { date: "9-Apr",  team: 23 },
-  { date: "9-Apr",  team: 21 },
-  { date: "9-Apr",  team: 25 },
-  { date: "9-Apr",  team: 7  },
-  { date: "9-Apr",  team: 11 },
-  { date: "9-Apr",  team: 8  },
-  { date: "9-Apr",  team: 7  },
-  { date: "9-Apr",  team: 1  },
-  { date: "9-Apr",  team: 11 },
-  { date: "9-Apr",  team: 4  },
-  { date: "9-Apr",  team: 5  },
-  // APR 14
-  { date: "14-Apr", team: 11 },
-  { date: "14-Apr", team: 3  },
-  { date: "14-Apr", team: 13 },
-  { date: "14-Apr", team: 12 },
-  { date: "14-Apr", team: 7  },
-  { date: "14-Apr", team: 1  },
-  { date: "14-Apr", team: 8  },
-  { date: "14-Apr", team: 25 },
-  { date: "14-Apr", team: 4  },
-  { date: "14-Apr", team: 11 },
-  { date: "14-Apr", team: 3  },
-  { date: "14-Apr", team: 6  },
-  { date: "14-Apr", team: 8  },
-  { date: "14-Apr", team: 2  },
-  { date: "14-Apr", team: 13 },
-  { date: "14-Apr", team: 2  },
-  { date: "14-Apr", team: 7  },
-  { date: "14-Apr", team: 12 },
-  { date: "14-Apr", team: 13 },
-  { date: "14-Apr", team: 6  },
-  { date: "14-Apr", team: 9  },
-  { date: "14-Apr", team: 22 },
-  { date: "14-Apr", team: 6  },
-  { date: "14-Apr", team: 23 },
-  { date: "14-Apr", team: 8  },
-  { date: "14-Apr", team: 2  },
-  // APR 16
-  { date: "16-Apr", team: 7  },
+  { date: "7-Apr",  team: 22 }, { date: "7-Apr",  team: 25 }, { date: "7-Apr",  team: 7  },
+  { date: "7-Apr",  team: 11 }, { date: "7-Apr",  team: 14 }, { date: "7-Apr",  team: 21 },
+  { date: "7-Apr",  team: 3  }, { date: "7-Apr",  team: 10 }, { date: "7-Apr",  team: 18 },
+  { date: "7-Apr",  team: 9  }, { date: "7-Apr",  team: 23 }, { date: "7-Apr",  team: 3  },
+  { date: "7-Apr",  team: 2  }, { date: "7-Apr",  team: 24 }, { date: "7-Apr",  team: 8  },
+  { date: "7-Apr",  team: 15 }, { date: "7-Apr",  team: 16 }, { date: "7-Apr",  team: 5  },
+  { date: "7-Apr",  team: 22 }, { date: "7-Apr",  team: 11 },
+  { date: "9-Apr",  team: 6  }, { date: "9-Apr",  team: 23 }, { date: "9-Apr",  team: 21 },
+  { date: "9-Apr",  team: 25 }, { date: "9-Apr",  team: 7  }, { date: "9-Apr",  team: 11 },
+  { date: "9-Apr",  team: 8  }, { date: "9-Apr",  team: 7  }, { date: "9-Apr",  team: 1  },
+  { date: "9-Apr",  team: 11 }, { date: "9-Apr",  team: 4  }, { date: "9-Apr",  team: 5  },
+  { date: "14-Apr", team: 11 }, { date: "14-Apr", team: 3  }, { date: "14-Apr", team: 13 },
+  { date: "14-Apr", team: 12 }, { date: "14-Apr", team: 7  }, { date: "14-Apr", team: 1  },
+  { date: "14-Apr", team: 8  }, { date: "14-Apr", team: 25 }, { date: "14-Apr", team: 4  },
+  { date: "14-Apr", team: 11 }, { date: "14-Apr", team: 3  }, { date: "14-Apr", team: 6  },
+  { date: "14-Apr", team: 8  }, { date: "14-Apr", team: 2  }, { date: "14-Apr", team: 13 },
+  { date: "14-Apr", team: 2  }, { date: "14-Apr", team: 7  }, { date: "14-Apr", team: 12 },
+  { date: "14-Apr", team: 13 }, { date: "14-Apr", team: 6  }, { date: "14-Apr", team: 9  },
+  { date: "14-Apr", team: 22 }, { date: "14-Apr", team: 6  }, { date: "14-Apr", team: 23 },
+  { date: "14-Apr", team: 8  }, { date: "14-Apr", team: 2  },
+  { date: "16-Apr", team: 7  }, { date: "16-Apr", team: 9  }, { date: "16-Apr", team: 8  },
+  { date: "16-Apr", team: 10 }, { date: "16-Apr", team: 11 }, { date: "16-Apr", team: 12 },
+  { date: "16-Apr", team: 9  }, { date: "16-Apr", team: 8  }, { date: "16-Apr", team: 18 },
+  { date: "16-Apr", team: 17 }, { date: "16-Apr", team: 23 }, { date: "16-Apr", team: 12 },
+  { date: "16-Apr", team: 11 }, { date: "16-Apr", team: 25 }, { date: "16-Apr", team: 9  },
+  { date: "16-Apr", team: 24 }, { date: "16-Apr", team: 8  }, { date: "16-Apr", team: 5  },
+  { date: "16-Apr", team: 13 }, { date: "16-Apr", team: 12 }, { date: "16-Apr", team: 6  },
   { date: "16-Apr", team: 9  },
-  { date: "16-Apr", team: 8  },
-  { date: "16-Apr", team: 10 },
-  { date: "16-Apr", team: 11 },
-  { date: "16-Apr", team: 12 },
-  { date: "16-Apr", team: 9  },
-  { date: "16-Apr", team: 8  },
-  { date: "16-Apr", team: 18 },
-  { date: "16-Apr", team: 17 },
-  { date: "16-Apr", team: 23 },
-  { date: "16-Apr", team: 12 },
-  { date: "16-Apr", team: 11 },
-  { date: "16-Apr", team: 25 },
-  { date: "16-Apr", team: 9  },
-  { date: "16-Apr", team: 24 },
-  { date: "16-Apr", team: 8  },
-  { date: "16-Apr", team: 5  },
-  { date: "16-Apr", team: 13 },
-  { date: "16-Apr", team: 12 },
-  { date: "16-Apr", team: 6  },
-  { date: "16-Apr", team: 9  },
-  // ADD NEW DATE ENTRIES HERE:
-  // { date: "21-Apr", team: 1 },
 ];
-
-/* ── Rendering (no edits needed below) ───────────────────────── */
 
 let activeFilter = "ALL";
 
@@ -518,20 +474,16 @@ function buildStats(dateFilter) {
   const relevant = dateFilter === "ALL"
     ? PARTICIPATION
     : PARTICIPATION.filter(p => p.date === dateFilter);
-
   const stats = {};
   for (let t = 1; t <= TOTAL_TEAMS; t++) {
     stats[t] = { total: 0, byDate: {} };
     SESSIONS.forEach(s => { stats[t].byDate[s.label] = 0; });
   }
-
   relevant.forEach(({ date, team }) => {
     if (!stats[team]) return;
     stats[team].total++;
-    if (stats[team].byDate[date] !== undefined)
-      stats[team].byDate[date]++;
+    if (stats[team].byDate[date] !== undefined) stats[team].byDate[date]++;
   });
-
   return Object.entries(stats)
     .map(([team, s]) => ({ team: +team, ...s }))
     .sort((a, b) => b.total - a.total || a.team - b.team);
@@ -562,38 +514,40 @@ function render() {
     const row = document.createElement('div');
     row.className = `row${rankClass}${isZero ? ' zero' : ''}`;
     row.style.animationDelay = `${idx * 0.022}s`;
+    row.setAttribute('role', 'listitem');
+
+    const rankLabel = rank === 1 ? '1st place' : rank === 2 ? '2nd place' : rank === 3 ? '3rd place' : rank === '—' ? 'unranked' : `rank ${rank}`;
+    row.setAttribute('aria-label', `Team ${team}, ${rankLabel}, ${total} total participation${total !== 1 ? 's' : ''}`);
 
     const pct = max > 0 ? Math.round((total / max) * 100) : 0;
 
     const dotsHTML = visibleSessions.map(s => {
       const count = byDate[s.label] || 0;
       const cls = count > 0 ? ' present' : '';
-      const style = count > 0
-        ? `style="background:${s.color};color:${s.color}"`
-        : '';
-      return `<div class="dot${cls}" ${style} title="${s.display}: ${count}"></div>`;
+      const dotStyle = count > 0 ? `style="background:${s.color};color:${s.color}"` : '';
+      const label = `${s.display}: ${count} participation${count !== 1 ? 's' : ''}`;
+      return `<div class="dot${cls}" ${dotStyle} role="img" aria-label="${label}" title="${label}"></div>`;
     }).join('');
 
     const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
     const rankDisplay = medal || (rank === '—' ? '—' : `#${rank}`);
 
     row.innerHTML = `
-      <div class="rank">${rankDisplay}</div>
+      <div class="rank" aria-hidden="true">${rankDisplay}</div>
       <div class="team">T-${String(team).padStart(2,'0')}</div>
-      <div class="dots">${dotsHTML || '<span style="font-size:0.55rem;color:var(--muted)">no sessions</span>'}</div>
-      <div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div></div>
-      <div class="count">${total}</div>
+      <div class="dots" aria-label="Session attendance dots">${dotsHTML || '<span style="font-size:0.82rem;color:var(--muted2)">No sessions</span>'}</div>
+      <div class="bar-cell" aria-hidden="true"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div></div>
+      <div class="count" aria-hidden="true">${total}</div>
     `;
     board.appendChild(row);
   });
 
-  // Legend
   const legend = document.getElementById('legend');
   legend.innerHTML = '';
   visibleSessions.forEach(s => {
     const item = document.createElement('div');
     item.className = 'legend-item';
-    item.innerHTML = `<div class="legend-dot" style="background:${s.color};box-shadow:0 0 5px ${s.color}"></div>${s.display}`;
+    item.innerHTML = `<div class="legend-dot" style="background:${s.color};box-shadow:0 0 5px ${s.color}" aria-hidden="true"></div><span>${s.display}</span>`;
     legend.appendChild(item);
   });
 }
@@ -606,6 +560,7 @@ function buildFilters() {
   allBtn.className = 'filter-btn all-btn active';
   allBtn.textContent = 'All Dates';
   allBtn.dataset.key = 'ALL';
+  allBtn.setAttribute('aria-pressed', 'true');
   allBtn.onclick = () => { activeFilter = 'ALL'; updateActive(); render(); };
   row.appendChild(allBtn);
 
@@ -614,6 +569,7 @@ function buildFilters() {
     btn.className = 'filter-btn';
     btn.textContent = s.display;
     btn.dataset.key = s.label;
+    btn.setAttribute('aria-pressed', 'false');
     btn.onclick = () => { activeFilter = s.label; updateActive(); render(); };
     row.appendChild(btn);
   });
@@ -623,6 +579,7 @@ function updateActive() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
     const isActive = btn.dataset.key === activeFilter;
     btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     if (isActive && !btn.classList.contains('all-btn')) {
       const s = SESSIONS.find(s => s.label === btn.dataset.key);
       if (s) { btn.style.borderColor = s.color; btn.style.color = s.color; btn.style.background = s.color + '18'; }
@@ -637,10 +594,11 @@ function updateActive() {
 function toggleTheme() {
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('themeIcon') && null;
   const btn = document.getElementById('themeToggle');
   btn.querySelector('.theme-icon').textContent = isDark ? '🌙' : '☀️';
   document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+  btn.setAttribute('aria-label', isDark ? 'Switch to dark mode' : 'Switch to light mode');
+  btn.setAttribute('aria-pressed', isDark ? 'false' : 'true');
 }
 
 buildFilters();
