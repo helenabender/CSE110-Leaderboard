@@ -22,6 +22,67 @@
     --muted2: #6b6e8f;
   }
 
+  [data-theme="light"] {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --surface2: #f2efe9;
+    --border: #e4dfd6;
+    --border2: #d4cdc2;
+    --gold: #b8860b;
+    --silver: #6b7785;
+    --bronze: #8b4513;
+    --accent: #6c3bff;
+    --accent2: #e8474c;
+    --text: #1e1a2e;
+    --muted: #a89f94;
+    --muted2: #7a6f6a;
+  }
+
+  [data-theme="light"] body {
+    background-image:
+      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(108,59,255,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 90% 100%, rgba(232,71,76,0.06) 0%, transparent 70%);
+  }
+
+  [data-theme="light"] .row:not(.zero):hover { border-color: var(--border2); }
+
+  [data-theme="light"] .filter-btn.active {
+    background: rgba(108,59,255,0.08);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  [data-theme="light"] .filter-btn.all-btn.active {
+    background: rgba(232,71,76,0.08);
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .theme-toggle {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--muted2);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .theme-toggle .theme-icon { font-size: 0.9rem; }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -295,11 +356,16 @@
     <h1>CSE 110 TEAM<br><span>BOARD</span></h1>
     <p>Participation Tracker · All Lectures</p>
   </div>
-  <div class="total-badge">
-    <strong id="totalEntries">0</strong>
-    Total Entries
-    <br>
-    <span id="sessionCount">0</span> Sessions Tracked
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <span class="theme-icon">☀️</span><span id="themeLabel">Light Mode</span>
+    </button>
+    <div class="total-badge">
+      <strong id="totalEntries">0</strong>
+      Total Entries
+      <br>
+      <span id="sessionCount">0</span> Sessions Tracked
+    </div>
   </div>
 </div>
 
@@ -566,6 +632,15 @@ function updateActive() {
       btn.style.background = '';
     }
   });
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon') && null;
+  const btn = document.getElementById('themeToggle');
+  btn.querySelector('.theme-icon').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
 }
 
 buildFilters();
