@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE110 Participation Team Leaderboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080d;
+    --surface: #0e0f18;
+    --surface2: #13141f;
+    --border: #1c1d2e;
+    --border2: #252638;
+    --gold: #ffd700;
+    --silver: #a8b2bd;
+    --bronze: #cd7f32;
+    --accent: #39ff14;
+    --accent2: #00cfff;
+    --text: #dde0f0;
+    --muted: #484a65;
+    --muted2: #6b6e8f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 10% 0%, rgba(57,255,20,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 90% 100%, rgba(0,207,255,0.05) 0%, transparent 70%);
+  }
+
+  .header {
+    max-width: 760px;
+    margin: 0 auto 48px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+
+  .header-left h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 6.5rem);
+    letter-spacing: 0.06em;
+    line-height: 0.9;
+    color: var(--text);
+  }
+
+  .header-left h1 span { color: var(--accent); }
+
+  .header-left p {
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-top: 8px;
+  }
+
+  .total-badge {
+    text-align: right;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .total-badge strong {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    letter-spacing: 0.05em;
+    color: var(--accent2);
+    line-height: 1;
+  }
+
+  .filter-section {
+    max-width: 760px;
+    margin: 0 auto 32px;
+  }
+
+  .filter-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 8px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--muted2);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .filter-btn.active {
+    background: rgba(57,255,20,0.08);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .filter-btn.all-btn.active {
+    background: rgba(0,207,255,0.08);
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .table-header {
+    max-width: 760px;
+    margin: 0 auto 6px;
+    display: grid;
+    grid-template-columns: 52px 70px 1fr 110px 56px;
+    gap: 12px;
+    padding: 0 18px;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .board {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 52px 70px 1fr 110px 56px;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 13px 18px;
+    transition: all 0.12s;
+    animation: fadeUp 0.35s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .row::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--muted);
+    opacity: 0.3;
+  }
+
+  .row.rank-1::before { background: var(--gold); opacity: 1; }
+  .row.rank-2::before { background: var(--silver); opacity: 1; }
+  .row.rank-3::before { background: var(--bronze); opacity: 1; }
+  .row.zero::before   { opacity: 0.1; }
+
+  .row.rank-1 { background: rgba(255,215,0,0.04); border-color: rgba(255,215,0,0.2); }
+  .row.rank-2 { background: rgba(168,178,189,0.03); border-color: rgba(168,178,189,0.15); }
+  .row.rank-3 { background: rgba(205,127,50,0.04); border-color: rgba(205,127,50,0.18); }
+  .row.zero   { opacity: 0.35; }
+
+  .row:not(.zero):hover { border-color: var(--border2); transform: translateX(3px); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-align: center;
+  }
+  .row.rank-1 .rank { color: var(--gold); }
+  .row.rank-2 .rank { color: var(--silver); }
+  .row.rank-3 .rank { color: var(--bronze); }
+
+  .team {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--text);
+  }
+
+  .dots {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--border2);
+    flex-shrink: 0;
+    cursor: default;
+  }
+
+  .dot.present { box-shadow: 0 0 6px currentColor; }
+
+  .bar-cell { display: flex; align-items: center; }
+
+  .bar-bg {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.03em;
+    text-align: right;
+    color: var(--accent);
+  }
+  .row.zero .count { color: var(--muted); font-size: 1.2rem; }
+
+  .legend {
+    max-width: 760px;
+    margin: 28px auto 0;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.6rem;
+    color: var(--muted2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  .footer {
+    max-width: 760px;
+    margin: 40px auto 0;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 2;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>CSE 110 TEAM<br><span>BOARD</span></h1>
+    <p>Participation Tracker · All Lectures</p>
+  </div>
+  <div class="total-badge">
+    <strong id="totalEntries">0</strong>
+    Total Entries
+    <br>
+    <span id="sessionCount">0</span> Sessions Tracked
+  </div>
+</div>
+
+<div class="filter-section">
+  <div class="filter-label">Filter by Date</div>
+  <div class="filter-row" id="filterRow"></div>
+</div>
+
+<div class="table-header">
+  <span style="text-align:center">Rank</span>
+  <span>Team</span>
+  <span>Sessions Present</span>
+  <span>Activity</span>
+  <span style="text-align:right">Total</span>
+</div>
+
+<div class="board" id="board"></div>
+<div class="legend" id="legend"></div>
+
+<div class="footer">
+  Showing all 25 teams &nbsp;·&nbsp; Dimmed teams have 0 entries for selected filter
+</div>
+
+<script>
+/* ================================================================
+   HOW TO ADD A NEW DATE SESSION:
+   ─────────────────────────────
+   1. Add a new object to SESSIONS:
+      { label: "21-Apr", display: "Apr 21", color: "#00cfff" }
+
+      - label:   must match exactly what you use in PARTICIPATION
+      - display: shown on buttons and legend
+      - color:   any CSS hex color for the dot
+
+   2. Add rows to PARTICIPATION for that date:
+      { date: "21-Apr", team: 5 },
+      { date: "21-Apr", team: 12 },
+
+   HOW TO CHANGE THE NUMBER OF TEAMS:
+   ────────────────────────────────────
+   Change TOTAL_TEAMS below.
+================================================================ */
+
+const TOTAL_TEAMS = 25;
+
+const SESSIONS = [
+  { label: "7-Apr",  display: "Apr 7",  color: "#ff6b9d" },
+  { label: "9-Apr",  display: "Apr 9",  color: "#ffb347" },
+  { label: "14-Apr", display: "Apr 14", color: "#39ff14" },
+  { label: "16-Apr", display: "Apr 16", color: "#a78bfa" },
+  // ADD NEW SESSIONS HERE:
+  // { label: "21-Apr", display: "Apr 21", color: "#00cfff" },
+  // { label: "23-Apr", display: "Apr 23", color: "#ff4757" },
+];
+
+const PARTICIPATION = [
+  // APR 7
+  { date: "7-Apr",  team: 22 },
+  { date: "7-Apr",  team: 25 },
+  { date: "7-Apr",  team: 7  },
+  { date: "7-Apr",  team: 11 },
+  { date: "7-Apr",  team: 14 },
+  { date: "7-Apr",  team: 21 },
+  { date: "7-Apr",  team: 3  },
+  { date: "7-Apr",  team: 10 },
+  { date: "7-Apr",  team: 18 },
+  { date: "7-Apr",  team: 9  },
+  { date: "7-Apr",  team: 23 },
+  { date: "7-Apr",  team: 3  },
+  { date: "7-Apr",  team: 2  },
+  { date: "7-Apr",  team: 24 },
+  { date: "7-Apr",  team: 8  },
+  { date: "7-Apr",  team: 15 },
+  { date: "7-Apr",  team: 16 },
+  { date: "7-Apr",  team: 5  },
+  { date: "7-Apr",  team: 22 },
+  { date: "7-Apr",  team: 11 },
+  // APR 9
+  { date: "9-Apr",  team: 6  },
+  { date: "9-Apr",  team: 23 },
+  { date: "9-Apr",  team: 21 },
+  { date: "9-Apr",  team: 25 },
+  { date: "9-Apr",  team: 7  },
+  { date: "9-Apr",  team: 11 },
+  { date: "9-Apr",  team: 8  },
+  { date: "9-Apr",  team: 7  },
+  { date: "9-Apr",  team: 1  },
+  { date: "9-Apr",  team: 11 },
+  { date: "9-Apr",  team: 4  },
+  { date: "9-Apr",  team: 5  },
+  // APR 14
+  { date: "14-Apr", team: 11 },
+  { date: "14-Apr", team: 3  },
+  { date: "14-Apr", team: 13 },
+  { date: "14-Apr", team: 12 },
+  { date: "14-Apr", team: 7  },
+  { date: "14-Apr", team: 1  },
+  { date: "14-Apr", team: 8  },
+  { date: "14-Apr", team: 25 },
+  { date: "14-Apr", team: 4  },
+  { date: "14-Apr", team: 11 },
+  { date: "14-Apr", team: 3  },
+  { date: "14-Apr", team: 6  },
+  { date: "14-Apr", team: 8  },
+  { date: "14-Apr", team: 2  },
+  { date: "14-Apr", team: 13 },
+  { date: "14-Apr", team: 2  },
+  { date: "14-Apr", team: 7  },
+  { date: "14-Apr", team: 12 },
+  { date: "14-Apr", team: 13 },
+  { date: "14-Apr", team: 6  },
+  { date: "14-Apr", team: 9  },
+  { date: "14-Apr", team: 22 },
+  { date: "14-Apr", team: 6  },
+  { date: "14-Apr", team: 23 },
+  { date: "14-Apr", team: 8  },
+  { date: "14-Apr", team: 2  },
+  // APR 16
+  { date: "16-Apr", team: 7  },
+  { date: "16-Apr", team: 9  },
+  { date: "16-Apr", team: 8  },
+  { date: "16-Apr", team: 10 },
+  { date: "16-Apr", team: 11 },
+  { date: "16-Apr", team: 12 },
+  { date: "16-Apr", team: 9  },
+  { date: "16-Apr", team: 8  },
+  { date: "16-Apr", team: 18 },
+  { date: "16-Apr", team: 17 },
+  { date: "16-Apr", team: 23 },
+  { date: "16-Apr", team: 12 },
+  { date: "16-Apr", team: 11 },
+  { date: "16-Apr", team: 25 },
+  { date: "16-Apr", team: 9  },
+  { date: "16-Apr", team: 24 },
+  { date: "16-Apr", team: 8  },
+  { date: "16-Apr", team: 5  },
+  { date: "16-Apr", team: 13 },
+  { date: "16-Apr", team: 12 },
+  { date: "16-Apr", team: 6  },
+  { date: "16-Apr", team: 9  },
+  // ADD NEW DATE ENTRIES HERE:
+  // { date: "21-Apr", team: 1 },
+];
+
+/* ── Rendering (no edits needed below) ───────────────────────── */
+
+let activeFilter = "ALL";
+
+function buildStats(dateFilter) {
+  const relevant = dateFilter === "ALL"
+    ? PARTICIPATION
+    : PARTICIPATION.filter(p => p.date === dateFilter);
+
+  const stats = {};
+  for (let t = 1; t <= TOTAL_TEAMS; t++) {
+    stats[t] = { total: 0, byDate: {} };
+    SESSIONS.forEach(s => { stats[t].byDate[s.label] = 0; });
+  }
+
+  relevant.forEach(({ date, team }) => {
+    if (!stats[team]) return;
+    stats[team].total++;
+    if (stats[team].byDate[date] !== undefined)
+      stats[team].byDate[date]++;
+  });
+
+  return Object.entries(stats)
+    .map(([team, s]) => ({ team: +team, ...s }))
+    .sort((a, b) => b.total - a.total || a.team - b.team);
+}
+
+function render() {
+  const sorted = buildStats(activeFilter);
+  const max = sorted.reduce((m, r) => Math.max(m, r.total), 1);
+  const totalEntries = sorted.reduce((s, r) => s + r.total, 0);
+
+  document.getElementById('totalEntries').textContent = totalEntries;
+  document.getElementById('sessionCount').textContent = SESSIONS.length;
+
+  const visibleSessions = activeFilter === "ALL"
+    ? SESSIONS
+    : SESSIONS.filter(s => s.label === activeFilter);
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+
+  let rankCounter = 1;
+  sorted.forEach(({ team, total, byDate }, idx) => {
+    const isZero = total === 0;
+    const rank = isZero ? '—' : rankCounter;
+    if (!isZero) rankCounter++;
+
+    const rankClass = (!isZero && rank <= 3) ? ` rank-${rank}` : '';
+    const row = document.createElement('div');
+    row.className = `row${rankClass}${isZero ? ' zero' : ''}`;
+    row.style.animationDelay = `${idx * 0.022}s`;
+
+    const pct = max > 0 ? Math.round((total / max) * 100) : 0;
+
+    const dotsHTML = visibleSessions.map(s => {
+      const count = byDate[s.label] || 0;
+      const cls = count > 0 ? ' present' : '';
+      const style = count > 0
+        ? `style="background:${s.color};color:${s.color}"`
+        : '';
+      return `<div class="dot${cls}" ${style} title="${s.display}: ${count}"></div>`;
+    }).join('');
+
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+    const rankDisplay = medal || (rank === '—' ? '—' : `#${rank}`);
+
+    row.innerHTML = `
+      <div class="rank">${rankDisplay}</div>
+      <div class="team">T-${String(team).padStart(2,'0')}</div>
+      <div class="dots">${dotsHTML || '<span style="font-size:0.55rem;color:var(--muted)">no sessions</span>'}</div>
+      <div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div></div>
+      <div class="count">${total}</div>
+    `;
+    board.appendChild(row);
+  });
+
+  // Legend
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  visibleSessions.forEach(s => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-dot" style="background:${s.color};box-shadow:0 0 5px ${s.color}"></div>${s.display}`;
+    legend.appendChild(item);
+  });
+}
+
+function buildFilters() {
+  const row = document.getElementById('filterRow');
+  row.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn all-btn active';
+  allBtn.textContent = 'All Dates';
+  allBtn.dataset.key = 'ALL';
+  allBtn.onclick = () => { activeFilter = 'ALL'; updateActive(); render(); };
+  row.appendChild(allBtn);
+
+  SESSIONS.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.textContent = s.display;
+    btn.dataset.key = s.label;
+    btn.onclick = () => { activeFilter = s.label; updateActive(); render(); };
+    row.appendChild(btn);
+  });
+}
+
+function updateActive() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const isActive = btn.dataset.key === activeFilter;
+    btn.classList.toggle('active', isActive);
+    if (isActive && !btn.classList.contains('all-btn')) {
+      const s = SESSIONS.find(s => s.label === btn.dataset.key);
+      if (s) { btn.style.borderColor = s.color; btn.style.color = s.color; btn.style.background = s.color + '18'; }
+    } else if (!isActive) {
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      btn.style.background = '';
+    }
+  });
+}
+
+buildFilters();
+render();
+</script>
+</body>
+</html>
